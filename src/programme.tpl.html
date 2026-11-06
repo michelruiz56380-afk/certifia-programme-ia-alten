@@ -1,0 +1,436 @@
+<title>Programme IA Alten</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Urbanist:wght@500;700;800&family=Roboto:wght@400;500;700&family=Dancing+Script:wght@600&display=swap">
+<style>
+/* Layout : bandeau dégradé de la charte, puis deux journées en frise horaire (heure à gauche, module à droite), supports en pied de page */
+:root{
+  --violet:#442FFA; --magenta:#BC3AFE; --marine:#292577; --lavande:#BA8BFD;
+  --bg:#F7F6FC; --surface:#FFFFFF; --fg:#1B1A33; --muted:#5D5B7A; --line:#E2DFF2;
+  --tag-bg:#ECE8FF; --tag-fg:#2E1FC4; --pause-bg:#EFEDF8; --warn-bg:#FFF4E5; --warn-fg:#7A4A00;
+  --grad:linear-gradient(120deg,#E9B8FF 0%,#BC3AFE 38%,#6A34FB 68%,#442FFA 100%);
+  --f-display:"Urbanist","Avenir Next","Segoe UI",system-ui,sans-serif;
+  --f-body:"Roboto","Helvetica Neue",Arial,sans-serif;
+  --f-script:"Dancing Script","Brush Script MT",cursive;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#13122A; --surface:#1D1B3A; --fg:#EEECFB; --muted:#ABA8CC; --line:#34315A;
+  --tag-bg:#2D2870; --tag-fg:#D6CCFF; --pause-bg:#1A1934; --warn-bg:#3A2A10; --warn-fg:#FFD9A0; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#13122A; --surface:#1D1B3A; --fg:#EEECFB; --muted:#ABA8CC; --line:#34315A;
+  --tag-bg:#2D2870; --tag-fg:#D6CCFF; --pause-bg:#1A1934; --warn-bg:#3A2A10; --warn-fg:#FFD9A0; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:16px;line-height:1.55}
+.wrap{max-width:1040px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.15}
+
+/* Bandeau */
+.hero{background:var(--grad);color:#fff;position:relative;overflow:hidden}
+.hero .wrap{padding-block:28px 44px;position:relative}
+.hero::after{content:"";position:absolute;right:-60px;bottom:-80px;width:280px;height:280px;border-radius:48px;background:rgba(255,255,255,.12);transform:rotate(18deg)}
+.brandbar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.brandbar img{height:40px;width:auto;display:block}
+.alten-tile{background:#fff;border-radius:12px;padding:8px 10px;box-shadow:0 4px 14px rgba(41,37,119,.18)}
+.brandbar .alten-tile img{height:76px}
+.alten-slot{display:flex;align-items:center;justify-content:center;height:44px;min-width:120px;padding:0 14px;border:1.5px dashed rgba(255,255,255,.75);border-radius:10px;font:700 13px/1 var(--f-display);letter-spacing:.08em;text-transform:uppercase;color:#fff;background:rgba(255,255,255,.08)}
+.eyebrow{margin-top:28px;font:500 13px/1.3 var(--f-body);letter-spacing:.12em;text-transform:uppercase;opacity:.9}
+.hero h1{font-size:clamp(32px,5.4vw,56px);font-weight:800;margin-top:10px;max-width:16ch}
+.hero h1 em{font-family:var(--f-script);font-style:normal;font-weight:600;font-size:1.05em}
+.hero p.lead{max-width:60ch;margin:16px 0 0;font-size:18px;opacity:.95}
+.facts{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.fact{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.35);border-radius:10px;padding:8px 14px;font-size:14px}
+.fact b{font-family:var(--f-display);font-size:16px}
+.printbtn{margin-top:24px;display:inline-flex;align-items:center;gap:8px;background:#fff;color:var(--marine);border:0;border-radius:10px;padding:10px 16px;font:700 15px/1 var(--f-display);cursor:pointer}
+.printbtn:focus-visible{outline:3px solid var(--marine);outline-offset:3px}
+
+/* Journées */
+main{padding-block:40px 24px}
+.day{margin-bottom:56px}
+.dayhead{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;align-items:end;padding-bottom:18px;border-bottom:2px solid var(--violet);margin-bottom:8px}
+.daynum{grid-row:span 2;font:600 44px/1 var(--f-script);color:var(--magenta)}
+.daydate{font:500 13px/1.3 var(--f-body);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.dayhead h2{font-size:clamp(22px,3vw,30px);font-weight:800}
+.dayhead .hours{grid-column:2;color:var(--muted);font-size:14px}
+
+.slot{display:grid;grid-template-columns:118px 1fr;gap:20px;padding-block:18px;border-bottom:1px solid var(--line);break-inside:avoid}
+.time{font:700 15px/1.3 var(--f-display);font-variant-numeric:tabular-nums;color:var(--marine);padding-top:3px}
+:root[data-theme="dark"] .time{color:var(--lavande)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .time{color:var(--lavande)}}
+.time small{display:block;font:400 13px/1.3 var(--f-body);color:var(--muted);margin-top:4px}
+.mod{min-width:0}
+.modtop{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.num{flex:none;width:34px;height:34px;border-radius:9px;background:var(--grad);color:#fff;display:grid;place-items:center;font:800 15px/1 var(--f-display)}
+.num.g{font-size:12px}
+.mod h3{font-size:21px;font-weight:700}
+.mod .sub{color:var(--muted);margin:4px 0 0}
+.mod ul{margin:10px 0 0;padding-left:20px}
+.mod li{margin:3px 0}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.chip{background:var(--tag-bg);color:var(--tag-fg);border-radius:6px;padding:3px 9px;font-size:13px;font-weight:500}
+.note{margin-top:10px;font-size:14px;color:var(--muted)}
+.slot.pause{grid-template-columns:118px 1fr;padding-block:10px;background:var(--pause-bg);border-bottom-color:transparent;border-radius:8px;margin-block:6px}
+.slot.pause .time{padding-left:12px;font-weight:500;color:var(--muted)}
+.slot.pause .mod{color:var(--muted);font-size:15px;align-self:center}
+.inner-pause{display:inline-block;margin-top:10px;font-size:13px;color:var(--muted);border:1px dashed var(--line);border-radius:6px;padding:2px 8px}
+
+.outcomes{margin-top:22px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 22px;break-inside:avoid}
+.outcomes h4{margin:0 0 8px;font:700 13px/1.3 var(--f-body);letter-spacing:.12em;text-transform:uppercase;color:var(--violet)}
+:root[data-theme="dark"] .outcomes h4{color:var(--lavande)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .outcomes h4{color:var(--lavande)}}
+.outcomes ul{margin:0;padding-left:20px}
+
+/* Supports */
+.supports{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:26px 24px;margin-bottom:40px}
+.supports h2{font-size:26px;font-weight:800}
+.lockbanner{display:flex;gap:10px;align-items:flex-start;margin:14px 0 18px;background:var(--warn-bg);color:var(--warn-fg);border-radius:10px;padding:10px 14px;font-size:15px}
+.lockbanner svg{flex:none;margin-top:2px}
+.doclist{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
+.doc{display:flex;gap:12px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-width:0}
+.doc .num{width:30px;height:30px;font-size:13px}
+.doc div{min-width:0}
+.doc strong{display:block;font-family:var(--f-display);font-size:16px}
+.doc span{font-size:13px;color:var(--muted)}
+.doc{color:inherit;text-decoration:none;background:var(--surface);transition:border-color .15s}
+.doc:hover{border-color:var(--violet)}
+.doc:focus-visible{outline:3px solid var(--violet);outline-offset:2px}
+.doclist li{display:flex;min-width:0}
+.doclist li .doc{flex:1}
+.gatemsg{margin:0 0 14px;background:var(--tag-bg);color:var(--tag-fg);border-radius:10px;padding:10px 14px;font-weight:500}
+.supports.open .lockbanner{background:var(--tag-bg);color:var(--tag-fg)}
+
+footer{border-top:1px solid var(--line);padding-block:20px 32px;color:var(--muted);font-size:13px}
+footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+footer img{height:26px;width:auto}
+.logo-dark{display:none}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .logo-light{display:none}:root:not([data-theme="light"]) .logo-dark{display:block}}
+:root[data-theme="dark"] .logo-light{display:none}
+:root[data-theme="dark"] .logo-dark{display:block}
+
+@media (max-width:560px){
+  .slot,.slot.pause{grid-template-columns:1fr;gap:6px}
+  .slot.pause .time{padding-left:12px}
+  .dayhead{grid-template-columns:1fr}.daynum{grid-row:auto}.dayhead .hours{grid-column:1}
+}
+
+/* Impression / PDF */
+@page{size:A4;margin:12mm 12mm 14mm}
+@media print{
+  :root{--bg:#fff;--surface:#fff;--fg:#1B1A33;--muted:#55536F;--line:#DDD9EE;--tag-bg:#ECE8FF;--tag-fg:#2E1FC4;--pause-bg:#F1EFF9;--warn-bg:#FFF4E5;--warn-fg:#7A4A00;color-scheme:light}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{font-size:9.6pt;line-height:1.36}
+  .wrap{max-width:none;padding:0}
+  .hero .wrap{padding:12px 20px 16px}
+  .hero{border-radius:14px}
+  .hero::after{display:none}
+  .eyebrow{margin-top:12px}
+  .hero h1{margin-top:4px}
+  .facts{margin-top:12px}
+  .fact{padding:4px 10px}
+  .hero h1{font-size:24pt;max-width:none}
+  .hero p.lead{font-size:10.5pt;margin-top:8px}
+  .printbtn{display:none!important}
+  .brandbar .alten-tile img{height:72px}
+  .alten-tile{box-shadow:none;padding:6px 8px}
+  main{padding-top:14px}
+  .day{margin-bottom:0;break-before:page}
+  .day:first-of-type{break-before:auto}
+  .slot{padding-block:6px;gap:14px;grid-template-columns:90px 1fr}
+  .dayhead{padding-bottom:8px}
+  .daynum{font-size:32px}
+  .mod .sub{margin-top:1px}
+  .num{width:26px;height:26px;font-size:12px;border-radius:7px}
+  .slot.pause{padding-block:4px;margin-block:3px}
+  .mod h3{font-size:12.5pt}
+  .mod ul{margin-top:5px}
+  .mod li{margin:1px 0}
+  .chips{margin-top:6px}
+  .chip{font-size:8.5pt;padding:1px 7px}
+  .note{font-size:9pt;margin-top:5px}
+  .outcomes{padding:10px 16px;margin-top:12px}
+  .supports{border:0;padding:0;margin-top:18px;break-inside:avoid}
+  .doc{padding:6px 10px}
+  .logo-dark{display:none!important}.logo-light{display:block!important}
+  footer{padding-block:10px 0}
+}
+</style>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="brandbar">
+      <img src="{{LOGO_WHITE}}" alt="Certif-IA">
+      <!-- Emplacement du logo Alten : remplacer ce bloc par <img src="…" alt="Alten"> -->
+      <div class="alten-tile"><img src="{{LOGO_ALTEN}}" alt="Alten"></div>
+    </div>
+    <p class="eyebrow">Formation · Équipes marketing et communication</p>
+    <h1>Produire et diffuser avec l'<em>IA</em></h1>
+    <p class="lead">Deux journées pour installer un cadre de travail fiable avec ChatGPT, Claude et Mistral Vibe, produire des contenus sourcés, puis les adapter, les diffuser et gagner en visibilité.</p>
+    <div class="facts">
+      <span class="fact"><b>17 et 18 novembre 2026</b></span>
+      <span class="fact"><b>14 h</b> de formation, 7 h par jour</span>
+      <span class="fact">9 h 00 – 17 h 30</span>
+      <span class="fact">Formateur : <b>Michel Ruiz</b></span>
+      <span class="fact">Démos, TP en binôme et workshop</span>
+    </div>
+    <button class="printbtn" id="printbtn" type="button" hidden>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M6 14h12v7H6z"/></svg>
+      Imprimer ou enregistrer en PDF
+    </button>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- JOUR 1 -->
+  <section class="day" aria-labelledby="j1">
+    <div class="dayhead">
+      <span class="daynum">Jour 1</span>
+      <span class="daydate">Mardi 17 novembre 2026</span>
+      <h2 id="j1">Produire avec l'IA à partir des contenus d'Alten</h2>
+      <span class="hours">9 h 00 – 17 h 30 · 7 h de formation, déjeuner 1 h, deux pauses · Animé par Michel Ruiz</span>
+    </div>
+
+    <div class="slot">
+      <div class="time">9 h 00<small>45 min</small></div>
+      <div class="mod">
+        <div class="modtop"><span class="num g">IA</span><h3>Généralités : comprendre l'IA</h3></div>
+        <p class="sub">Le cadrage commun avant de toucher aux outils.</p>
+        <ul>
+          <li>Connaissance, intelligence et décision : ce qu'un LLM sait faire, et ce qu'il ne fait pas (il prédit le plus probable, pas le vrai)</li>
+          <li>Trois générations d'IA, applications et défis éthiques</li>
+          <li>Sécurité : jamais d'informations confidentielles ; repères sur l'AI Act</li>
+        </ul>
+        <div class="chips"><span class="chip">Exposé</span></div>
+      </div>
+    </div>
+
+    <div class="slot">
+      <div class="time">9 h 45<small>1 h</small></div>
+      <div class="mod">
+        <div class="modtop"><span class="num">1</span><h3>Un bon setup</h3></div>
+        <p class="sub">Confidentialité et personnalisation : apprendre à se connaître avec son IA.</p>
+        <ul>
+          <li>ChatGPT, Claude et Mistral Vibe en parallèle : fonctions et niveaux de licence</li>
+          <li>Désactiver l'entraînement, vérifier la mémoire, se présenter une fois pour toutes</li>
+          <li>Organiser son espace : un projet par dossier</li>
+        </ul>
+        <div class="chips"><span class="chip">Démo dans les 3 outils</span><span class="chip">Setup en 6 étapes</span></div>
+      </div>
+    </div>
+
+    <div class="slot pause"><div class="time">10 h 45</div><div class="mod">Pause · 15 min</div></div>
+
+    <div class="slot">
+      <div class="time">11 h 00<small>1 h 30</small></div>
+      <div class="mod">
+        <div class="modtop"><span class="num">2</span><h3>L'art du prompt</h3></div>
+        <p class="sub">Bien demander, puis faire parler un contenu existant.</p>
+        <ul>
+          <li>Prompt engineering : trois règles et un gabarit (rôle, contexte, tâche, process, caractéristiques)</li>
+          <li>Reverse engineering : comment l'IA lit une image, et ce qu'elle en tire</li>
+          <li>Exercices : plateforme de marque, QCM à partir d'un texte fiable, du moodboard au premier modèle</li>
+        </ul>
+        <div class="chips"><span class="chip">3 exercices</span></div>
+      </div>
+    </div>
+
+    <div class="slot pause"><div class="time">12 h 30</div><div class="mod">Déjeuner · 1 h</div></div>
+
+    <div class="slot">
+      <div class="time">13 h 30<small>1 h 15</small></div>
+      <div class="mod">
+        <div class="modtop"><span class="num">3</span><h3>La veille automatisée</h3></div>
+        <p class="sub">De l'alerte Google à l'agent qui veille pour vous.</p>
+        <ul>
+          <li>Google Alert ou veille IA : ce que l'on gagne vraiment</li>
+          <li>Les tâches planifiées dans les trois outils, puis la chaîne d'agent : veille, tri, brouillon</li>
+          <li>Les limites : faits inventés, liens morts, quotas, accès aux connecteurs</li>
+        </ul>
+        <div class="chips"><span class="chip">Démo 15 min</span><span class="chip">TP en binôme 40 min</span><span class="chip">Vérification des liens 20 min</span></div>
+        <p class="note">Livrable : une veille Alten planifiée (concurrents, clients, appels d'offres, marque employeur…) et un premier rapport trié entre « vérifié » et « à confirmer ».</p>
+      </div>
+    </div>
+
+    <div class="slot">
+      <div class="time">14 h 45<small>1 h 30</small></div>
+      <div class="mod">
+        <div class="modtop"><span class="num">4</span><h3>La recherche approfondie</h3></div>
+        <p class="sub">Faire une étude de marché : du web ouvert au corpus maîtrisé.</p>
+        <ul>
+          <li>Partie A · Recherche approfondie avec ChatGPT et Claude : rédiger son brief, lancer l'étude, critiquer les rapports</li>
+          <li>Partie B · Gemini Notebook : charger ses sources, interroger avec citations, restituer dans le Studio</li>
+          <li>L'exercice piège : une question hors corpus</li>
+        </ul>
+        <div class="chips"><span class="chip">Démo</span><span class="chip">TP en binôme</span></div>
+      </div>
+    </div>
+
+    <div class="slot pause"><div class="time">16 h 15</div><div class="mod">Pause · 15 min</div></div>
+
+    <div class="slot">
+      <div class="time">16 h 30<small>1 h</small></div>
+      <div class="mod">
+        <div class="modtop"><span class="num">5</span><h3>Créer un agent plume LinkedIn <span style="font-weight:500;color:var(--muted)">· partie 1</span></h3></div>
+        <p class="sub">Une Skill pour la méthode, un Projet par client.</p>
+        <ul>
+          <li>Un agent = une Skill (le savoir-faire commun) + un Projet (le dossier du client)</li>
+          <li>La Skill « Plume LinkedIn » et la fiche voix du client</li>
+          <li>Créer le projet du client à partir d'un kit fictif</li>
+        </ul>
+        <div class="chips"><span class="chip">Démo</span><span class="chip">Exercice fiche voix</span></div>
+        <p class="note">Suite le lendemain matin.</p>
+      </div>
+    </div>
+
+    <div class="outcomes">
+      <h4>Ce que vous repartez avec, le soir du J1</h4>
+      <ul>
+        <li>Vos trois assistants paramétrés : confidentialité, profil, projets</li>
+        <li>Un gabarit de prompt et une méthode pour faire décrire un contenu</li>
+        <li>Une veille sourcée et planifiée, et un réflexe de vérification</li>
+        <li>Une étude de marché sourcée, exploitée dans un corpus maîtrisé</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- JOUR 2 -->
+  <section class="day" aria-labelledby="j2">
+    <div class="dayhead">
+      <span class="daynum">Jour 2</span>
+      <span class="daydate">Mercredi 18 novembre 2026</span>
+      <h2 id="j2">Adapter, diffuser et gagner en visibilité</h2>
+      <span class="hours">9 h 00 – 17 h 30 · 7 h de formation, déjeuner 1 h, deux pauses · Animé par Michel Ruiz</span>
+    </div>
+
+    <div class="slot">
+      <div class="time">9 h 00<small>30 min</small></div>
+      <div class="mod">
+        <div class="modtop"><span class="num">5</span><h3>Créer un agent plume LinkedIn <span style="font-weight:500;color:var(--muted)">· partie 2</span></h3></div>
+        <p class="sub">L'agent produit, le groupe juge.</p>
+        <ul>
+          <li>Un calendrier éditorial sur 4 semaines et une banque de 8 posts</li>
+          <li>Test à l'aveugle : vrais posts et posts de l'agent mélangés, à vous de deviner</li>
+        </ul>
+        <div class="chips"><span class="chip">TP en binôme</span><span class="chip">Test à l'aveugle</span></div>
+      </div>
+    </div>
+
+    <div class="slot">
+      <div class="time">9 h 30<small>2 h 15</small></div>
+      <div class="mod">
+        <div class="modtop"><span class="num">7</span><h3>SEO et GEO</h3></div>
+        <p class="sub">Être trouvé par Google, être cité par les IA.</p>
+        <ul>
+          <li>SEO : c'est quoi, comment ça marche, le guide des bonnes pratiques, ce que l'IA fait bien ou pas</li>
+          <li>GEO : comment une IA choisit ses sources, les bonnes pratiques classées par niveau de preuve</li>
+          <li>Exercices : rédiger un article SEO (Mistral Vibe, comparé à ChatGPT et Claude), choisir une Skill de rédacteur SEO, l'installer dans Claude et l'adapter</li>
+        </ul>
+        <div class="chips"><span class="chip">Théorie</span><span class="chip">3 exercices</span></div>
+        <span class="inner-pause">Pause de 15 min à 10 h 30</span>
+      </div>
+    </div>
+
+    <div class="slot pause"><div class="time">12 h 00</div><div class="mod">Déjeuner · 1 h</div></div>
+
+    <div class="slot">
+      <div class="time">13 h 00<small>1 h 45</small></div>
+      <div class="mod">
+        <div class="modtop"><span class="num">8</span><h3>Vibe coder une proposition client</h3></div>
+        <p class="sub">Une page web que le client consulte, et qu'Alten met à jour à distance.</p>
+        <ul>
+          <li>D'une proposition PDF figée à une page vivante, sur un seul lien</li>
+          <li>ChatGPT Sites ou artefact Claude : où ça se trouve, règles de partage</li>
+          <li>Les règles avant d'envoyer : un lien public est public, chaque chiffre se relit</li>
+        </ul>
+        <div class="chips"><span class="chip">Démo 20 min</span><span class="chip">TP en binôme 55 min</span><span class="chip">Débrief</span></div>
+        <p class="note">Le TP : construire la proposition, la publier, puis encaisser une demande de changement du « client » toutes les 15 minutes.</p>
+      </div>
+    </div>
+
+    <div class="slot pause"><div class="time">14 h 45</div><div class="mod">Pause · 15 min</div></div>
+
+    <div class="slot">
+      <div class="time">15 h 00<small>2 h 30</small></div>
+      <div class="mod">
+        <div class="modtop"><span class="num">9</span><h3>Workshop : le Panel IA Alten</h3></div>
+        <p class="sub">Faire réagir un panel avant de publier.</p>
+        <ul>
+          <li>Trois équipes en parallèle : 24 personas sourcés, une Skill « panel-alten », un gabarit de rapport</li>
+          <li>Crash-test : une publicité passe devant le panel, une classe d'âge à la fois</li>
+          <li>Débrief : ce que le panel apporte, et ses limites (il prépare le vrai test, il ne le remplace pas)</li>
+        </ul>
+        <div class="chips"><span class="chip">Travail de groupe</span><span class="chip">Mobilise les modules 4 et 5</span></div>
+      </div>
+    </div>
+
+    <div class="outcomes">
+      <h4>Ce que vous repartez avec, le soir du J2</h4>
+      <ul>
+        <li>Un agent plume LinkedIn, un calendrier éditorial et une banque de posts</li>
+        <li>Une checklist SEO/GEO, un article optimisé et une Skill de rédaction SEO</li>
+        <li>Une proposition client en page web, modifiable à distance</li>
+        <li>Un panel de 24 personas réutilisable pour pré-tester vos contenus</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- SUPPORTS -->
+  <section class="supports" id="supports" aria-labelledby="sup">
+    <h2 id="sup">Supports de cours</h2>
+    <div class="lockbanner" id="lockbanner">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+      <span id="locktext">Les supports seront disponibles à partir du <b>jeudi 19 novembre 2026</b>.</span>
+    </div>
+    <p class="gatemsg" id="gatemsg" role="status" aria-live="polite" hidden>Ce support sera disponible à partir du jeudi 19 novembre 2026. Revenez sur cette page à cette date.</p>
+    <ul class="doclist">
+      <li><a class="doc gated" href="https://drive.google.com/drive/folders/10XhqX-a20_cSJB_5sAhnJrvbOM-3HUen?usp=sharing" target="_blank" rel="noopener"><span class="num g">IA</span><div><strong>Généralités : comprendre l'IA</strong><span class="st">Disponible le 19/11</span></div></a></li>
+      <li><a class="doc gated" href="https://drive.google.com/drive/folders/10XhqX-a20_cSJB_5sAhnJrvbOM-3HUen?usp=sharing" target="_blank" rel="noopener"><span class="num">1</span><div><strong>Un bon setup</strong><span class="st">Disponible le 19/11</span></div></a></li>
+      <li><a class="doc gated" href="https://drive.google.com/drive/folders/10XhqX-a20_cSJB_5sAhnJrvbOM-3HUen?usp=sharing" target="_blank" rel="noopener"><span class="num">2</span><div><strong>L'art du prompt</strong><span class="st">Disponible le 19/11</span></div></a></li>
+      <li><a class="doc gated" href="https://drive.google.com/drive/folders/10XhqX-a20_cSJB_5sAhnJrvbOM-3HUen?usp=sharing" target="_blank" rel="noopener"><span class="num">3</span><div><strong>La veille automatisée</strong><span class="st">Disponible le 19/11</span></div></a></li>
+      <li><a class="doc gated" href="https://drive.google.com/drive/folders/10XhqX-a20_cSJB_5sAhnJrvbOM-3HUen?usp=sharing" target="_blank" rel="noopener"><span class="num">4</span><div><strong>La recherche approfondie</strong><span class="st">Disponible le 19/11</span></div></a></li>
+      <li><a class="doc gated" href="https://drive.google.com/drive/folders/10XhqX-a20_cSJB_5sAhnJrvbOM-3HUen?usp=sharing" target="_blank" rel="noopener"><span class="num">5</span><div><strong>Créer un agent plume LinkedIn</strong><span class="st">Disponible le 19/11</span></div></a></li>
+      <li><a class="doc gated" href="https://drive.google.com/drive/folders/10XhqX-a20_cSJB_5sAhnJrvbOM-3HUen?usp=sharing" target="_blank" rel="noopener"><span class="num">6</span><div><strong>Paramétrer Claude Design à la charte</strong><span class="st">Module bonus, non présenté en séance · 19/11</span></div></a></li>
+      <li><a class="doc gated" href="https://drive.google.com/drive/folders/10XhqX-a20_cSJB_5sAhnJrvbOM-3HUen?usp=sharing" target="_blank" rel="noopener"><span class="num">7</span><div><strong>SEO et GEO</strong><span class="st">Disponible le 19/11</span></div></a></li>
+      <li><a class="doc gated" href="https://drive.google.com/drive/folders/10XhqX-a20_cSJB_5sAhnJrvbOM-3HUen?usp=sharing" target="_blank" rel="noopener"><span class="num">8</span><div><strong>Vibe coder une proposition client</strong><span class="st">Disponible le 19/11</span></div></a></li>
+      <li><a class="doc gated" href="https://drive.google.com/drive/folders/10XhqX-a20_cSJB_5sAhnJrvbOM-3HUen?usp=sharing" target="_blank" rel="noopener"><span class="num">9</span><div><strong>Workshop : le Panel IA Alten</strong><span class="st">Disponible le 19/11</span></div></a></li>
+    </ul>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Formation IA Alten · 17 et 18 novembre 2026 · Programme susceptible d'ajustements en séance</span>
+    <span><img class="logo-light" src="{{LOGO_NAVY}}" alt="Certif-IA"><img class="logo-dark" src="{{LOGO_WHITE}}" alt="Certif-IA"></span>
+  </div>
+</footer>
+
+<script>
+  // Le bouton n'apparaît que si la page est ouverte directement dans un navigateur (l'impression est bloquée dans un cadre intégré).
+  (function(){
+    var inFrame = true; try { inFrame = window.self !== window.top; } catch(e) {}
+    var b = document.getElementById('printbtn');
+    if (!inFrame && b) { b.hidden = false; b.addEventListener('click', function(){ window.print(); }); }
+  })();
+  // Supports : ouverts à partir du jeudi 19 novembre 2026, 0 h (heure de Paris = 18/11 23 h UTC).
+  (function(){
+    var OPEN = Date.UTC(2026, 10, 18, 23, 0, 0);
+    var sec = document.getElementById('supports'), msg = document.getElementById('gatemsg');
+    function isOpen(){ return Date.now() >= OPEN; }
+    function render(){
+      if (!isOpen()) return;
+      sec.classList.add('open');
+      document.getElementById('locktext').innerHTML = 'Les supports sont en ligne : cliquez sur un module pour ouvrir le dossier Google Drive.';
+      document.querySelectorAll('.doc .st').forEach(function(e){ e.textContent = e.textContent.indexOf('bonus') > -1 ? 'Module bonus, non présenté en séance' : 'Ouvrir dans Google Drive'; });
+      msg.hidden = true;
+    }
+    document.querySelectorAll('.doc.gated').forEach(function(a){
+      a.addEventListener('click', function(e){
+        if (isOpen()) return;
+        e.preventDefault();
+        msg.hidden = false;
+        msg.scrollIntoView({block: 'nearest', behavior: 'smooth'});
+      });
+    });
+    render();
+  })();
+</script>
