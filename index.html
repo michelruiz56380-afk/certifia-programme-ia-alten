@@ -46,7 +46,7 @@ h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.1
 .facts{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
 .fact{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.35);border-radius:10px;padding:8px 14px;font-size:14px}
 .fact b{font-family:var(--f-display);font-size:16px}
-.printbtn{margin-top:24px;display:inline-flex;align-items:center;gap:8px;background:#fff;color:var(--marine);border:0;border-radius:10px;padding:10px 16px;font:700 15px/1 var(--f-display);cursor:pointer}
+.printbtn{margin-top:24px;display:inline-flex;text-decoration:none;align-items:center;gap:8px;background:#fff;color:var(--marine);border:0;border-radius:10px;padding:10px 16px;font:700 15px/1 var(--f-display);cursor:pointer}
 .printbtn:focus-visible{outline:3px solid var(--marine);outline-offset:3px}
 
 /* Journées */
@@ -179,10 +179,10 @@ footer img{height:26px;width:auto}
       <span class="fact">Formateur : <b>Michel Ruiz</b></span>
       <span class="fact">Démos, TP en binôme et workshop</span>
     </div>
-    <button class="printbtn" id="printbtn" type="button" hidden>
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M6 14h12v7H6z"/></svg>
-      Imprimer ou enregistrer en PDF
-    </button>
+    <a class="printbtn" id="printbtn" href="Programme_Formation_IA_Alten.pdf" download="Programme_Formation_IA_Alten.pdf">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+      Télécharger le programme (PDF)
+    </a>
   </div>
 </header>
 
@@ -198,7 +198,7 @@ footer img{height:26px;width:auto}
     </div>
 
     <div class="slot">
-      <div class="time">9 h 00<small>45 min</small></div>
+      <div class="time">9 h 00<small>1 h</small></div>
       <div class="mod">
         <div class="modtop"><span class="num g">IA</span><h3>Généralités : comprendre l'IA</h3></div>
         <p class="sub">Le cadrage commun avant de toucher aux outils.</p>
@@ -212,7 +212,7 @@ footer img{height:26px;width:auto}
     </div>
 
     <div class="slot">
-      <div class="time">9 h 45<small>1 h</small></div>
+      <div class="time">10 h 00<small>45 min</small></div>
       <div class="mod">
         <div class="modtop"><span class="num">1</span><h3>Un bon setup</h3></div>
         <p class="sub">Confidentialité et personnalisation : apprendre à se connaître avec son IA.</p>
@@ -412,11 +412,11 @@ footer img{height:26px;width:auto}
 </footer>
 
 <script>
-  // Le bouton n'apparaît que si la page est ouverte directement dans un navigateur (l'impression est bloquée dans un cadre intégré).
+  // Dans un cadre intégré (aperçu claude.ai), le téléchargement direct est bloqué : on pointe vers le PDF du dépôt GitHub.
   (function(){
     var inFrame = true; try { inFrame = window.self !== window.top; } catch(e) {}
     var b = document.getElementById('printbtn');
-    if (!inFrame && b) { b.hidden = false; b.addEventListener('click', function(){ window.print(); }); }
+    if (inFrame && b) { b.href = 'https://raw.githubusercontent.com/michelruiz56380-afk/certifia-programme-ia-alten/main/Programme_Formation_IA_Alten.pdf'; b.target = '_blank'; b.rel = 'noopener'; b.removeAttribute('download'); }
   })();
   // Supports : ouverts à partir du jeudi 19 novembre 2026, 0 h (heure de Paris = 18/11 23 h UTC).
   (function(){
