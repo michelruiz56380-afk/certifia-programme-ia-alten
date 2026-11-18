@@ -426,6 +426,7 @@ footer img{height:26px;width:auto}
   (function(){
     var inFrame = true; try { inFrame = window.self !== window.top; } catch(e) {}
     var b = document.getElementById('printbtn');
+    if (inFrame) document.querySelectorAll('a.doc[href^="supports/"]').forEach(function(a){ a.href = 'https://certifia-programme-ia-alten.netlify.app/' + a.getAttribute('href'); });
     if (inFrame && b) { b.href = 'https://raw.githubusercontent.com/michelruiz56380-afk/certifia-programme-ia-alten/main/Programme_Formation_IA_Alten.pdf'; b.target = '_blank'; b.rel = 'noopener'; b.removeAttribute('download'); }
   })();
   // Supports : ouverts à partir du jeudi 19 novembre 2026, 0 h (heure de Paris = 18/11 23 h UTC).
